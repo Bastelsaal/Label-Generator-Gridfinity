@@ -35,7 +35,7 @@ batch_label_data = [
 
 
 /* [Part customization] */
-Component = "phillips head bolt"; // [phillips head bolt, phillips wood screw, Wall Anchor, Torx wood screw, Torx panhead wood screw, Phillips head countersunk, Socket head bolt, Hex head bolt, Dome head bolt, Flat Head countersunk, Standard washer, Spring washer, Standard nut, Lock nut, Heat set inserts, Torx head bolt, Countersunk Torx head bolt, None, Custom Text]
+Component = "phillips head bolt"; // [phillips head bolt, phillips wood screw, Wall Anchor, Torx wood screw, Torx panhead wood screw, Phillips head countersunk, Socket head bolt, Grub screw, Hex head bolt, Dome head bolt, Flat Head countersunk, Standard washer, Spring washer, Standard nut, Lock nut, Slide-in T-nut, Hammer nut, Heat set inserts, Torx head bolt, Countersunk Torx head bolt, None, Custom Text]
 diameter = "M4";  // free text, e.g. "1/4-20", "#8-32"
 hardware_length = 24;
 
@@ -190,6 +190,10 @@ module choose_Part_version(Part_version, hardware_length, width, height, diamete
         Countersunk_Torx_head(hardware_length, width, height);
         bolt_text(diameter, hardware_length, height);
 
+    } else if (Part_version == "Grub screw") {
+        Grub_screw(hardware_length, width, height);
+        bolt_text(diameter, hardware_length, height);
+
     } else if (Part_version == "Hex head bolt") {
         Hex_head(hardware_length, width, height);
         bolt_text(diameter, hardware_length, height);
@@ -224,6 +228,14 @@ module choose_Part_version(Part_version, hardware_length, width, height, diamete
 
     } else if (Part_version == "Lock nut") {
         lock_Nut(width, height);
+        nut_text(diameter, height);
+
+    } else if (Part_version == "Slide-in T-nut") {
+        Slide_in_T_Nut(width, height);
+        nut_text(diameter, height);
+
+    } else if (Part_version == "Hammer nut") {
+        Hammer_Nut(width, height);
         nut_text(diameter, height);
 
     } else if (Part_version == "Heat set inserts") {
@@ -278,6 +290,48 @@ module lock_Nut(width, height, vertical_offset = 2.5) {
 
         translate([4, -2, 0])
             cube([3.5, 4, text_height]);
+    }
+}
+
+// Slide-in T-nut for aluminium profiles (inserted from the profile end)
+module Slide_in_T_Nut(width, height, vertical_offset = 2.5) {
+    translate([-4, vertical_offset, height]) {
+        // top view: rectangular block with threaded hole
+        difference() {
+            translate([-3.5, -2, 0])
+                cube([7, 4, text_height]);
+            cylinder(h=text_height, d=2.5);
+        }
+        // side view: T profile, flange at the bottom, neck into the slot
+        translate([5, -2.5, 0])
+            cube([6, 2, text_height]);
+        translate([6.75, -0.5, 0])
+            cube([2.5, 1.5, text_height]);
+    }
+}
+
+// Hammer nut for aluminium profiles (dropped into the slot, turned 90°)
+module Hammer_Nut(width, height, vertical_offset = 2.5) {
+    translate([-4, vertical_offset, height]) {
+        // top view: two opposite corners rounded so it can rotate in the slot
+        difference() {
+            hull() {
+                translate([1.5, 0, 0])
+                    cylinder(h=text_height, r=2);
+                translate([-1.5, 0, 0])
+                    cylinder(h=text_height, r=2);
+                translate([3, -2, 0])
+                    cube([0.5, 0.5, text_height]);
+                translate([-3.5, 1.5, 0])
+                    cube([0.5, 0.5, text_height]);
+            }
+            cylinder(h=text_height, d=2.5);
+        }
+        // side view: tapered body with neck on top
+        linear_extrude(height=text_height)
+            polygon(points=[[6.5, -2.5], [9.5, -2.5], [11, 0.5], [5, 0.5]]);
+        translate([6.75, 0.5, 0])
+            cube([2.5, 1.5, text_height]);
     }
 }
 
@@ -475,6 +529,24 @@ module Socket_head(hardware_length, width, height, vertical_offset = 2.5) {
 
         // stem
         drawBoltStem(hardware_length, text_height, [7, -1.25, 0]);
+    }
+}
+
+// Grub screw (headless set screw with hex socket)
+module Grub_screw(hardware_length, width, height, vertical_offset = 2.5) {
+    display_length = (hardware_length > 20) ? 20 : hardware_length;
+    translate([-display_length/2 - 2, vertical_offset, height]) {
+        // front view
+        difference() {
+            cylinder(h=text_height, d=5);
+            cylinder(h=text_height, r=1.6, $fn=6);
+        }
+        // side view: full diameter threaded body with hex socket at the drive end
+        difference() {
+            drawBoltStem(hardware_length, text_height, [4, -2, 0], thickness=4);
+            translate([4, -0.8, 0])
+                cube([1.5, 1.6, text_height]);
+        }
     }
 }
 
