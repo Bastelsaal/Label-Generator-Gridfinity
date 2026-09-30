@@ -35,7 +35,7 @@ batch_label_data = [
 
 
 /* [Part customization] */
-Component = "phillips head bolt"; // [phillips head bolt, phillips wood screw, Wall Anchor, Torx wood screw, Torx panhead wood screw, Phillips head countersunk, Socket head bolt, Grub screw, Hex head bolt, Dome head bolt, Flat Head countersunk, Standard washer, Spring washer, Standard nut, Lock nut, Cap nut, Slide-in T-nut, Hammer nut, Heat set inserts, Torx head bolt, Countersunk Torx head bolt, None, Custom Text]
+Component = "phillips head bolt"; // [phillips head bolt, phillips wood screw, Wall Anchor, Torx wood screw, Torx panhead wood screw, Phillips head countersunk, Socket head bolt, Grub screw, Hex head bolt, Dome head bolt, Flat Head countersunk, Standard washer, Spring washer, Standard nut, Lock nut, Cap nut, Disc nut, Slide-in T-nut, Hammer nut, Heat set inserts, Torx head bolt, Countersunk Torx head bolt, None, Custom Text]
 diameter = "M4";  // free text, e.g. "1/4-20", "#8-32"
 hardware_length = 24;
 
@@ -234,6 +234,10 @@ module choose_Part_version(Part_version, hardware_length, width, height, diamete
         Cap_Nut(width, height);
         nut_text(diameter, height);
 
+    } else if (Part_version == "Disc nut") {
+        Disc_Nut(width, height);
+        nut_text(diameter, height);
+
     } else if (Part_version == "Slide-in T-nut") {
         Slide_in_T_Nut(width, height);
         nut_text(diameter, height);
@@ -317,6 +321,26 @@ module Cap_Nut(width, height, vertical_offset = 2.5) {
                 translate([0, -2, 0])
                     cube([2, 4, text_height]);
             }
+    }
+}
+
+// Disc nut: hex nut captive on a large round washer
+module Disc_Nut(width, height, vertical_offset = 2.5) {
+    translate([-3, vertical_offset, height]) {
+        // top view: hex nut with threaded hole, framed by the washer
+        difference() {
+            cylinder(h=text_height, d=5.6);
+            cylinder(h=text_height, d=4.8, $fn=6);
+        }
+        difference() {
+            cylinder(h=text_height, d=4, $fn=6);
+            cylinder(h=text_height, d=2.2);
+        }
+        // side view: thin washer with the hex body on top
+        translate([4, -2.8, 0])
+            cube([0.8, 5.6, text_height]);
+        translate([4.8, -2, 0])
+            cube([2.2, 4, text_height]);
     }
 }
 
