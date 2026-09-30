@@ -35,7 +35,7 @@ batch_label_data = [
 
 
 /* [Part customization] */
-Component = "phillips head bolt"; // [phillips head bolt, phillips wood screw, Wall Anchor, Torx wood screw, Torx panhead wood screw, Phillips head countersunk, Socket head bolt, Grub screw, Hex head bolt, Dome head bolt, Flat Head countersunk, Standard washer, Spring washer, Standard nut, Lock nut, Cap nut, Disc nut, Slide-in T-nut, Hammer nut, Heat set inserts, Torx head bolt, Countersunk Torx head bolt, None, Custom Text]
+Component = "phillips head bolt"; // [phillips head bolt, phillips wood screw, Wall Anchor, Torx wood screw, Torx panhead wood screw, Phillips head countersunk, Socket head bolt, Grub screw, Hex head bolt, Dome head bolt, Flat Head countersunk, Standard washer, Spring washer, Standard nut, Lock nut, Cap nut, Disc nut, Wing nut, Slide-in T-nut, Hammer nut, Heat set inserts, Torx head bolt, Countersunk Torx head bolt, None, Custom Text]
 diameter = "M4";  // free text, e.g. "1/4-20", "#8-32"
 hardware_length = 24;
 
@@ -238,6 +238,10 @@ module choose_Part_version(Part_version, hardware_length, width, height, diamete
         Disc_Nut(width, height);
         nut_text(diameter, height);
 
+    } else if (Part_version == "Wing nut") {
+        Wing_Nut(width, height);
+        nut_text(diameter, height);
+
     } else if (Part_version == "Slide-in T-nut") {
         Slide_in_T_Nut(width, height);
         nut_text(diameter, height);
@@ -342,6 +346,34 @@ module Disc_Nut(width, height, vertical_offset = 2.5) {
         translate([4.8, -2, 0])
             cube([2.2, 4, text_height]);
     }
+}
+
+// Wing nut (DIN 315): round hub with two wings for turning by hand
+module Wing_Nut(width, height, vertical_offset = 2.5) {
+    translate([-4.25, vertical_offset, height])
+        linear_extrude(height=text_height) {
+            // top view: hub with threaded hole, wings as a thin bar
+            difference() {
+                union() {
+                    circle(d=3.2);
+                    hull() {
+                        translate([-3, 0]) circle(r=0.5);
+                        translate([3, 0]) circle(r=0.5);
+                    }
+                }
+                circle(d=1.8);
+            }
+            // side view: tapered hub with both wings rising outwards
+            translate([8.5, 0]) {
+                polygon(points=[[-1.5, -2.5], [1.5, -2.5], [1.1, 0.3], [-1.1, 0.3]]);
+                for (side = [-1, 1])
+                    mirror([side < 0 ? 1 : 0, 0])
+                        hull() {
+                            translate([0.9, -2.2]) square([0.5, 1.5]);
+                            translate([2.8, 1.9]) circle(r=0.6);
+                        }
+            }
+        }
 }
 
 // Slide-in T-nut for aluminium profiles (inserted from the profile end)
