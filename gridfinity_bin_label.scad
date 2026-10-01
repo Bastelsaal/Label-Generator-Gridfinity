@@ -563,7 +563,7 @@ module Torx_star(points, point_len, height=2, rnd=0.1) {
 
 // Torx head bolt
 module Torx_head(hardware_length, width, height, vertical_offset = 2.5) {
-    display_length = (hardware_length > 20) ? 20 : hardware_length;
+    display_length = min(hardware_length, 20 * Y_units);
     translate([-display_length/2 - 2, vertical_offset, height]) {
         // top view
         difference() {
@@ -581,7 +581,7 @@ module Torx_head(hardware_length, width, height, vertical_offset = 2.5) {
 
 // Countersunk Torx
 module Countersunk_Torx_head(hardware_length, width, height, vertical_offset = 2.5) {
-    display_length = (hardware_length > 20) ? 20 : hardware_length;
+    display_length = min(hardware_length, 20 * Y_units);
     translate([-display_length/2 - 2, vertical_offset, height]) {
         // top view
         difference() {
@@ -599,7 +599,7 @@ module Countersunk_Torx_head(hardware_length, width, height, vertical_offset = 2
 
 // Socket head
 module Socket_head(hardware_length, width, height, vertical_offset = 2.5) {
-    display_length = (hardware_length > 20) ? 20 : hardware_length;
+    display_length = min(hardware_length, 20 * Y_units);
     translate([-display_length/2 - 2, vertical_offset, height]) {
         // top view
         difference() {
@@ -617,7 +617,7 @@ module Socket_head(hardware_length, width, height, vertical_offset = 2.5) {
 
 // Grub screw (headless set screw with hex socket)
 module Grub_screw(hardware_length, width, height, vertical_offset = 2.5) {
-    display_length = (hardware_length > 20) ? 20 : hardware_length;
+    display_length = min(hardware_length, 20 * Y_units);
     translate([-display_length/2 - 2, vertical_offset, height]) {
         // front view
         difference() {
@@ -635,7 +635,7 @@ module Grub_screw(hardware_length, width, height, vertical_offset = 2.5) {
 
 // Hex head
 module Hex_head(hardware_length, width, height, vertical_offset = 2.5) {
-    display_length = (hardware_length > 20) ? 20 : hardware_length;
+    display_length = min(hardware_length, 20 * Y_units);
     translate([-display_length/2 - 2, vertical_offset, height]) {
         // top view
         cylinder(h=text_height, d=5, $fn=6);
@@ -650,7 +650,7 @@ module Hex_head(hardware_length, width, height, vertical_offset = 2.5) {
 
 // Countersunk socket head
 module Countersunk_socket_head(hardware_length, width, height, vertical_offset = 2.5) {
-    display_length = (hardware_length > 20) ? 20 : hardware_length;
+    display_length = min(hardware_length, 20 * Y_units);
     translate([-display_length/2 - 2, vertical_offset, height]) {
         // top view
         difference() {
@@ -668,7 +668,7 @@ module Countersunk_socket_head(hardware_length, width, height, vertical_offset =
 
 // Dome head
 module Dome_head(hardware_length, width, height, vertical_offset = 2.5) {
-    display_length = (hardware_length > 20) ? 20 : hardware_length;
+    display_length = min(hardware_length, 20 * Y_units);
     translate([-display_length/2 - 2, vertical_offset, height]) {
         // top view
         difference() {
@@ -690,7 +690,7 @@ module Dome_head(hardware_length, width, height, vertical_offset = 2.5) {
 
 // Phillips head
 module Phillips_head(hardware_length, width, height, vertical_offset = 2.5) {
-    display_length = (hardware_length > 20) ? 20 : hardware_length;
+    display_length = min(hardware_length, 20 * Y_units);
     translate([-display_length/2 - 2, vertical_offset, height]) {
         // top view
         difference() {
@@ -715,7 +715,7 @@ module Phillips_head(hardware_length, width, height, vertical_offset = 2.5) {
 
 // Phillips countersunk
 module Phillips_head_countersunk(hardware_length, width, height, vertical_offset = 2.5) {
-    display_length = (hardware_length > 20) ? 20 : hardware_length;
+    display_length = min(hardware_length, 20 * Y_units);
     translate([-display_length/2 - 2, vertical_offset, height]) {
         // top view
         difference() {
@@ -738,7 +738,7 @@ module Phillips_head_countersunk(hardware_length, width, height, vertical_offset
 //Philips wood screw
 module Phillips_Wood_Screw(hardware_length, width, height, vertical_offset = 2.5) {
     // We'll place everything in "real" X after we clamp a final stem length
-    display_length = (hardware_length > 20) ? 20 : hardware_length;
+    display_length = min(hardware_length, 20 * Y_units);
 
     // The start of the main stem
     stemStart = [5, -1.25, 0];
@@ -782,7 +782,7 @@ module Phillips_Wood_Screw(hardware_length, width, height, vertical_offset = 2.5
 //Torx wood screw
 module Torx_Wood_Screw(hardware_length, width, height, vertical_offset = 2.5) {
     // We'll place everything in "real" X after we clamp a final stem length
-    display_length = (hardware_length > 20) ? 20 : hardware_length;
+    display_length = min(hardware_length, 20 * Y_units);
 
     // The start of the main stem
     stemStart = [5, -1.25, 0];
@@ -820,7 +820,7 @@ module Torx_Wood_Screw(hardware_length, width, height, vertical_offset = 2.5) {
 
 // Torx panhead wood screw
 module Torx_Panhead_Wood_Screw(hardware_length, width, height, vertical_offset = 2.5) {
-    display_length = (hardware_length > 20) ? 20 : hardware_length;
+    display_length = min(hardware_length, 20 * Y_units);
 
     // Start position of the stem (a bit further right than countersunk)
     stemStart = [6, -1.25, 0];
