@@ -35,7 +35,7 @@ batch_label_data = [
 
 
 /* [Part customization] */
-Component = "phillips head bolt"; // [phillips head bolt, phillips wood screw, Wall Anchor, Torx wood screw, Torx panhead wood screw, Phillips head countersunk, Socket head bolt, Grub screw, Hex head bolt, Dome head bolt, Flat Head countersunk, Standard washer, Spring washer, Standard nut, Square nut, Lock nut, Cap nut, Disc nut, Wing nut, Slide-in T-nut, Hammer nut, Heat set inserts, Torx head bolt, Countersunk Torx head bolt, None, Custom Text]
+Component = "phillips head bolt"; // [phillips head bolt, phillips wood screw, Wall Anchor, Torx wood screw, Torx panhead wood screw, Phillips head countersunk, Socket head bolt, Grub screw, Hex head bolt, Dome head bolt, Flat Head countersunk, Standard washer, Spring washer, Standard nut, Square nut, Lock nut, Cap nut, Disc nut, Wing nut, Slide-in T-nut, Hammer nut, Heat set inserts, Torx head bolt, Torx pan head bolt, Countersunk Torx head bolt, None, Custom Text]
 diameter = "M4";  // free text, e.g. "1/4-20", "#8-32"
 hardware_length = 24;
 
@@ -184,6 +184,10 @@ module choose_Part_version(Part_version, hardware_length, width, height, diamete
 
     } else if (Part_version == "Torx head bolt") {
         Torx_head(hardware_length, width, height);
+        bolt_text(diameter, hardware_length, height);
+
+    } else if (Part_version == "Torx pan head bolt") {
+        Torx_pan_head(hardware_length, width, height);
         bolt_text(diameter, hardware_length, height);
 
     } else if (Part_version == "Countersunk Torx head bolt") {
@@ -718,6 +722,28 @@ module Phillips_head(hardware_length, width, height, vertical_offset = 2.5) {
                 cube([1, 4, text_height]);
             translate([-2, -0.5, 0])
                 cube([4, 1, text_height]);
+        }
+        // side view
+        translate([6, 0, 0]) {
+            difference() {
+                cylinder(h=text_height, d=5);
+                translate([0, -2.5, 0])
+                    cube([4, 5, text_height]);
+            }
+        }
+        // stem
+        drawBoltStem(hardware_length, text_height, [6, -1.25, 0]);
+    }
+}
+
+// Torx pan head
+module Torx_pan_head(hardware_length, width, height, vertical_offset = 2.5) {
+    display_length = min(hardware_length, 20 * Y_units);
+    translate([-display_length/2 - 2, vertical_offset, height]) {
+        // top view
+        difference() {
+            cylinder(h=text_height, d=5);
+            Torx_star(6, 2, height=2, rnd=0.1);
         }
         // side view
         translate([6, 0, 0]) {
