@@ -35,7 +35,7 @@ batch_label_data = [
 
 
 /* [Part customization] */
-Component = "phillips head bolt"; // [phillips head bolt, phillips wood screw, Wall Anchor, Torx wood screw, Torx panhead wood screw, Phillips head countersunk, Socket head bolt, Grub screw, Hex head bolt, Dome head bolt, Flat Head countersunk, Standard washer, Spring washer, Standard nut, Lock nut, Cap nut, Disc nut, Wing nut, Slide-in T-nut, Hammer nut, Heat set inserts, Torx head bolt, Countersunk Torx head bolt, None, Custom Text]
+Component = "phillips head bolt"; // [phillips head bolt, phillips wood screw, Wall Anchor, Torx wood screw, Torx panhead wood screw, Phillips head countersunk, Socket head bolt, Grub screw, Hex head bolt, Dome head bolt, Flat Head countersunk, Standard washer, Spring washer, Standard nut, Square nut, Lock nut, Cap nut, Disc nut, Wing nut, Slide-in T-nut, Hammer nut, Heat set inserts, Torx head bolt, Countersunk Torx head bolt, None, Custom Text]
 diameter = "M4";  // free text, e.g. "1/4-20", "#8-32"
 hardware_length = 24;
 
@@ -226,6 +226,10 @@ module choose_Part_version(Part_version, hardware_length, width, height, diamete
         standard_Nut(width, height);
         nut_text(diameter, height);
 
+    } else if (Part_version == "Square nut") {
+        Square_Nut(width, height);
+        nut_text(diameter, height);
+
     } else if (Part_version == "Lock nut") {
         lock_Nut(width, height);
         nut_text(diameter, height);
@@ -286,6 +290,21 @@ module standard_Nut(width, height, vertical_offset = 2.5) {
         // side view
         translate([4, -2.5, 0])
             cube([2.8, 5, text_height]);
+    }
+}
+
+// Square nut (DIN 557 / DIN 562)
+module Square_Nut(width, height, vertical_offset = 2.5) {
+    translate([-2.5, vertical_offset, height]) {
+        // top view: square body with threaded hole
+        difference() {
+            translate([-2.2, -2.2, 0])
+                cube([4.4, 4.4, text_height]);
+            cylinder(h=text_height, d=2.6);
+        }
+        // side view
+        translate([4, -2.2, 0])
+            cube([2.8, 4.4, text_height]);
     }
 }
 
