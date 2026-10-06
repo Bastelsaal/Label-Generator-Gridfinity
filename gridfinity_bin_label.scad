@@ -47,7 +47,7 @@ hardware_length = 24;
 /* [Bolt (only used when Category is Bolt)] */
 Head  = "Pan head";  // [Socket head, Pan head, Countersunk, Hex head, Grub screw]
 // Ignored for hex head bolts
-Drive = "Phillips";  // [Hex socket, Phillips, Torx]
+Drive = "Phillips";  // [Hex socket, Phillips, Torx, Slotted]
 // Wood adds a pointed tip, ignored for grub screws
 Tip   = "Machine";   // [Machine, Wood]
 
@@ -650,6 +650,9 @@ module drive_recess(drive) {
             cube([4, 1, text_height]);
     } else if (drive == "Torx") {
         Torx_star(6, 2, height=2, rnd=0.1);
+    } else if (drive == "Slotted") {
+        translate([-0.5, -2, 0])
+            cube([1, 4, text_height]);
     } else {
         cylinder(h=text_height, r=1.6, $fn=6);
     }
