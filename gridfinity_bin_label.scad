@@ -45,9 +45,9 @@ diameter = "M4";  // free text, e.g. "1/4-20", "#8-32"
 hardware_length = 24;
 
 /* [Bolt (only used when Category is Bolt)] */
-Head  = "Pan head";  // [Socket head, Pan head, Countersunk, Hex head, Grub screw]
+Head  = "Pan head";  // [Socket head, Pan head, Mushroom head, Flat head, Countersunk, Hex head, Grub screw]
 // Ignored for hex head bolts
-Drive = "Phillips";  // [Hex socket, Phillips, Torx, Slotted]
+Drive = "Phillips";  // [Hex socket, Phillips, Torx, Torx TR, Slotted]
 // Wood adds a pointed tip, ignored for grub screws
 Tip   = "Machine";   // [Machine, Wood]
 
@@ -639,6 +639,9 @@ module bolt_top_view(head, drive) {
             cylinder(h=text_height, d=5);
             drive_recess(drive);
         }
+        // tamper resistant Torx: security pin in the middle of the star
+        if (drive == "Torx TR")
+            cylinder(h=text_height, d=1.2);
     }
 }
 
@@ -648,7 +651,7 @@ module drive_recess(drive) {
             cube([1, 4, text_height]);
         translate([-2, -0.5, 0])
             cube([4, 1, text_height]);
-    } else if (drive == "Torx") {
+    } else if (drive == "Torx" || drive == "Torx TR") {
         Torx_star(6, 2, height=2, rnd=0.1);
     } else if (drive == "Slotted") {
         translate([-0.5, -2, 0])
@@ -677,6 +680,25 @@ module bolt_side_view(head) {
                     cube([4, 5, text_height]);
             }
         }
+    } else if (head == "Mushroom head") {
+        // flatter and wider dome than the pan head
+        translate([6, 0, 0]) {
+            difference() {
+                scale([0.55, 1.1, 1])
+                    cylinder(h=text_height, d=5);
+                translate([0, -3, 0])
+                    cube([4, 6, text_height]);
+            }
+        }
+    } else if (head == "Flat head") {
+        // low cylindrical head as wide as the mushroom head, flat top
+        translate([4.6, -2.75, 0])
+            linear_extrude(height=text_height)
+                hull() {
+                    translate([0.3, 0.3]) circle(r=0.3);
+                    translate([0.3, 5.2]) circle(r=0.3);
+                    translate([1, 0])     square([0.4, 5.5]);
+                }
     } else {
         echo(str("WARNING: unknown head: ", head));
     }
