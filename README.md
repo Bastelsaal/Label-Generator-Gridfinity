@@ -19,6 +19,7 @@ The current version includes support for:
 - **Bolts**
 - **Nuts**
 - **Washers**
+- **Standoffs**
 - **Threaded Inserts**
 
 New parts are regularly added to the library. Contributions are welcome!

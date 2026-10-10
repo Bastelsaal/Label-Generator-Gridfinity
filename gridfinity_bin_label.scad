@@ -7,7 +7,7 @@
 //////////////////////////////////////////////////////////////
 
 // Each entry is [part, diameter, length]. The part is a list of the dropdown
-// values below: [category, type] for nuts, washers and others, and
+// values below: [category, type] for nuts, washers, standoffs and others, and
 // [category, head, drive, tip] for bolts (drive and tip are optional).
 // The old component names like "Dome head bolt" still work as well.
 batch_label_data = [
@@ -39,9 +39,9 @@ batch_label_data = [
 
 /* [Part customization] */
 // Pick the category here, then refine it in the matching section below
-Category = "Bolt"; // [Bolt, Nut, Washer, Other]
+Category = "Bolt"; // [Bolt, Nut, Washer, Standoff, Other]
 diameter = "M4";  // free text, e.g. "1/4-20", "#8-32"
-// Used for bolts, wall anchors and heat set inserts
+// Used for bolts, standoffs (body without the thread stud), wall anchors and heat set inserts
 hardware_length = 24;
 
 /* [Bolt (only used when Category is Bolt)] */
@@ -56,6 +56,10 @@ Nut_type = "Standard"; // [Standard, Square, Lock, Cap, Disc, Wing, Slide-in T-n
 
 /* [Washer (only used when Category is Washer)] */
 Washer_type = "Standard"; // [Standard, Spring]
+
+/* [Standoff (only used when Category is Standoff)] */
+// Hex spacers like the brass M3 ones for mainboards, male = thread stud
+Standoff_type = "Male-female"; // [Male-female, Female-female, Male-male]
 
 /* [Other (only used when Category is Other)] */
 Other_type = "Wall anchor"; // [Wall anchor, Heat set insert, Custom text, None]
@@ -105,6 +109,7 @@ selected_part =
     (Category == "Bolt")   ? ["Bolt", Head, Drive, Tip] :
     (Category == "Nut")    ? ["Nut", Nut_type] :
     (Category == "Washer") ? ["Washer", Washer_type] :
+    (Category == "Standoff") ? ["Standoff", Standoff_type] :
     ["Other", Other_type];
 
 part = (Component == "") ? selected_part : resolve_part(Component);
@@ -266,6 +271,12 @@ module choose_Part_version(part, hardware_length, width, height, diameter) {
         else if (type == "Spring")   spring_washer(width, height);
         else echo(str("WARNING: unknown washer type: ", type));
         washer_text(diameter, height);
+
+    } else if (category == "Standoff") {
+        if (type == "Male-female" || type == "Female-female" || type == "Male-male")
+            Standoff(type, hardware_length, height);
+        else echo(str("WARNING: unknown standoff type: ", type));
+        bolt_text(diameter, hardware_length, height);
 
     } else if (category == "Other") {
         if (type == "Wall anchor") {
@@ -474,6 +485,41 @@ module spring_washer(width, height, vertical_offset = 2.5) {
         // side view
         translate([4, -2.5, 0])
             cube([1, 5, text_height]);
+    }
+}
+
+// Hex standoff / spacer (e.g. brass M3 for mainboards), male ends get a thread stud
+module Standoff(type, hardware_length, height, vertical_offset = 2.5) {
+    display_length = min(hardware_length, 20 * Y_units);
+    stud_length    = 2.5;
+    male_start     = (type == "Male-male");
+    male_end       = (type != "Female-female");
+    body_x         = 4 + (male_start ? stud_length : 0);
+    right_end      = body_x + display_length + (male_end ? stud_length : 0);
+
+    // center the icon between the left edge of the top view and the right end
+    translate([-(right_end - 2.5)/2, vertical_offset, height]) {
+        // top view: hexagon, with a hole or the stud seen from above
+        difference() {
+            cylinder(h=text_height, d=5, $fn=6);
+            cylinder(h=text_height, d=male_start ? 3.4 : 2.6);
+        }
+        if (male_start)
+            cylinder(h=text_height, d=2.4);
+
+        // side view: hex body with the edges between its faces
+        difference() {
+            drawBoltStem(hardware_length, text_height, [body_x, -2, 0], thickness=4);
+            for (y = [-1.05, 0.65])
+                translate([body_x, y, 0])
+                    cube([display_length, 0.4, text_height]);
+        }
+        if (male_start)
+            translate([body_x - stud_length, -1, 0])
+                cube([stud_length, 2, text_height]);
+        if (male_end)
+            translate([body_x + display_length, -1, 0])
+                cube([stud_length, 2, text_height]);
     }
 }
 
